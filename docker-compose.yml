@@ -1,0 +1,31 @@
+services:
+  # Application react frontend 
+  melodix-app:
+    build: ./melodix-client
+    container_name: melodix-music-app
+    ports:
+      - "5173:5173"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./melodix-client:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: unless-stopped
+  # application backend express.js
+  server:
+    build:
+      context: ./melodix-server
+      dockerfile: dockerfile
+    restart: always
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: melodix
+      POSTGRES_USER: melodix_user
+      POSTGRES_PASSWORD: melodix_password
+      MONGODB_URI: mongodb+srv://slimabida21_db_user:Mongo290380@cluster0.th0j9np.mongodb.net/melodix?retryWrites=true&w=majority
+    ports:
+      - 3000:3000
+    command: node index.js
