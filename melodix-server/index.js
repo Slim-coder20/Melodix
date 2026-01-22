@@ -8,12 +8,16 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Cahrger le dotenv avant d'importer les fichiers DB 
+// Charger le dotenv avant d'importer les fichiers DB
 dotenv.config({ path: join(__dirname, '.env') });
 
-//Importattion des modules de base de données 
+// Vérification du chargement de JWT_SECRET (à retirer après vérification)
+console.log('JWT_SECRET loaded:', process.env.JWT_SECRET ? 'YES' : 'NO');
+
+// Importation des modules de base de données
 import { connectMongo } from './DB/mongoDB.js';
 import { connectPostgres } from './DB/postgres.js';
+import authRoutes from './routes/authRoute.js';
 
 
 // Initialize Express app // 
@@ -26,7 +30,12 @@ app.use(express.json());
 // Connect to MongoDB // 
 await connectMongo();
 await connectPostgres();
-//Start the server // 
-app.listen(process.env.PORT || 3000, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
+
+// Routes //
+app.use('/api/auth', authRoutes);
+
+// Start the server //
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

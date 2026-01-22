@@ -22,15 +22,10 @@ const userSchema = new mongoose.Schema({
     }
   }, 
   password: {
-    type: String, 
-    required: true, 
-    minlength: 8,
-    validate:{
-      validator: function(value){
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
-      },
-      message: "Le mot de passe n'est pas valide",
-    }
+    type: String,
+    required: true,
+    // La validation du format est faite dans le controller avant le hashage
+    // Ici on stocke le hash qui ne correspond pas au pattern du mot de passe en clair
   },
   resetPasswordToken: {
     type: String,
