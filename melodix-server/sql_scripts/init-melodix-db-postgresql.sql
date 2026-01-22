@@ -1,14 +1,7 @@
 -- ============================================
--- HARMONY - Schéma PostgreSQL v003
--- Catalogue, Stocks, Commandes
+-- MELODIX - Schéma PostgreSQL v003
+-- Catalogue, Stocks, Commandes, Promo Codes, stock_product, products_with_stock, generate_order_number
 -- ============================================
-
--- Création de la base de données (à exécuter manuellement si nécessaire)
--- CREATE DATABASE harmony;
-
--- Extension pour UUID (optionnel, si vous voulez utiliser UUID au lieu de SERIAL)
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- ============================================
 -- TABLE: categories
 -- ============================================
@@ -23,7 +16,7 @@ CREATE TABLE IF NOT EXISTS categories (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_category_parent FOREIGN KEY (parent_id) 
-        REFERENCES categories(id) ON DELETE SET NULL
+    REFERENCES categories(id) ON DELETE SET NULL
 );
 
 -- Index pour categories
@@ -182,34 +175,6 @@ CREATE TABLE IF NOT EXISTS order_items (
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
 
--- ============================================
--- TABLE: reviews (Optionnel)
--- ============================================
-CREATE TABLE IF NOT EXISTS reviews (
-    id SERIAL PRIMARY KEY,
-    user_id VARCHAR(50) NOT NULL, -- ID MongoDB (ObjectId en string)
-    product_id INT NOT NULL,
-    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
-    title VARCHAR(255),
-    comment TEXT,
-    is_verified_purchase BOOLEAN DEFAULT FALSE,
-    is_approved BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_review_product FOREIGN KEY (product_id) 
-        REFERENCES products(id) ON DELETE CASCADE,
-    CONSTRAINT unique_user_product_review UNIQUE (user_id, product_id)
-);
-
--- Index pour reviews
-CREATE INDEX IF NOT EXISTS idx_reviews_product_id ON reviews(product_id);
-CREATE INDEX IF NOT EXISTS idx_reviews_rating ON reviews(rating);
-CREATE INDEX IF NOT EXISTS idx_reviews_is_approved ON reviews(is_approved);
-CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
-
--- Trigger pour updated_at
-CREATE TRIGGER update_reviews_updated_at BEFORE UPDATE ON reviews
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================
 -- TABLE: promo_codes (Optionnel)
@@ -302,6 +267,4 @@ INSERT INTO stocks (name, type, address) VALUES
     ('Magasin Paris', 'magasin', '123 Rue de la Musique, 75001 Paris')
 ON CONFLICT (name) DO NOTHING;
 
--- ============================================
--- FIN DU SCRIPT
--- ============================================
+

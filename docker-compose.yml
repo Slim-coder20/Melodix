@@ -20,12 +20,12 @@ services:
       dockerfile: dockerfile
     restart: always
     environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: melodix
-      POSTGRES_USER: melodix_user
-      POSTGRES_PASSWORD: melodix_password
-      MONGODB_URI: mongodb+srv://slimabida21_db_user:Mongo290380@cluster0.th0j9np.mongodb.net/melodix?retryWrites=true&w=majority
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MONGODB_URI: ${MONGODB_URI}
     ports:
       - 3000:3000
     command: node index.js
