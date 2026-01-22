@@ -1,53 +1,14 @@
-import { useState } from "react";
+import { useForm } from 'react-hook-form'; 
 import { Link } from "react-router-dom";
 
 
 export default function ForgotPassword() {
-  // State //
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
-  const [formData, setFormData] = useState({
-    email: "",
-  });
-
-  const [errors, setErrors] = useState({});
-
-  // fonction //
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // Validation formulaire //
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    // Vérifier que l'email est bien valide //
-    if (!formData.email.trim()) {
-      newErrors.email = "L'email est requis";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "L'email n'est pas valide";
-    }
-
-    return newErrors;
-  };
-
-  // // Soumission du formulaire de rénitialisation du mot de passe  //
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const newErrors = validateForm();
-
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Données du formulaire:", formData);
-      // Ici tu ajouteras l'appel API plus tard
-      alert("envoie réussi ! (Front-end seulement pour le moment)");
-    } else {
-      setErrors(newErrors);
-    }
+  const onSubmit = async (data) => {
+    // Code pour envoyer les données à l'API backend //
+    console.log(data);
+    reset();
   };
 
   return (
@@ -64,7 +25,7 @@ export default function ForgotPassword() {
       </div>
       <div className="mt-6 sm:mt-8 sm:mx-auto sm:w-full sm:max-w-md px-3 sm:px-0">
         <div className="bg-white p-4 md:py-8 md:px-10 shadow sm:rounded-lg">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Email */}
             <div>
               <label
@@ -78,14 +39,21 @@ export default function ForgotPassword() {
                 id="email"
                 name="email"
                 placeholder="votre email"
-                onChange={handleChange}
-                value={formData.email}
+                {...register("email", {
+                  required: "L'email est requis",
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "L'email n'est pas valide",
+                  },
+                })}
                 className={`mt-1 block w-full border ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.email.message}
+                </p>
               )}
             </div>
             <div>

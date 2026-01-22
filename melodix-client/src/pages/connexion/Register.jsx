@@ -1,86 +1,20 @@
-import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 export default function Register() {
-  const [formData, setFormData] = useState({
-    nom: "",
-    prenom: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    adresse: "",
-    telephone: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm();
 
-  const [errors, setErrors] = useState({});
-
-  // Gestion des changements dans les inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    // Effacer l'erreur du champ quand l'utilisateur tape
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  };
-
-  // Validation du formulaire
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.nom.trim()) newErrors.nom = "Le nom est requis";
-    if (!formData.prenom.trim()) newErrors.prenom = "Le prénom est requis";
-
-    if (!formData.email.trim()) {
-      newErrors.email = "L'email est requis";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "L'email n'est pas valide";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Le mot de passe est requis";
-    } else if (formData.password.length < 6) {
-      newErrors.password =
-        "Le mot de passe doit contenir au moins 6 caractères";
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
-    }
-
-    
-
-    if (!formData.adresse.trim()) newErrors.adresse = "L'adresse est requise";
-
-    if (!formData.telephone.trim()) {
-      newErrors.telephone = "Le numéro de téléphone est requis";
-    } else if (!/^\d{10}$/.test(formData.telephone.replace(/\s/g, ""))) {
-      newErrors.telephone = "Le numéro de téléphone doit contenir 10 chiffres";
-    }
-
-    return newErrors;
-  };
-
-  // Soumission du formulaire
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newErrors = validateForm();
-
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Données du formulaire:", formData);
-      // Ici tu ajouteras l'appel API plus tard
-      alert("Inscription réussie ! (Front-end seulement pour le moment)");
-    } else {
-      setErrors(newErrors);
-    }
-  };
+  async function onSubmit(data) {
+    // Code pour envoyer les données à l'API backend //
+    console.log(data);
+    reset();
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-10 sm:py-12 sm:px-6 lg:px-8">
@@ -101,7 +35,7 @@ export default function Register() {
 
       <div className="mt-6 sm:mt-8 sm:mx-auto sm:w-full sm:max-w-md px-3 sm:px-0">
         <div className="bg-white p-4 md:py-8 md:px-10 shadow sm:rounded-lg">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Nom et Prénom */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <div>
@@ -115,14 +49,15 @@ export default function Register() {
                   id="nom"
                   name="nom"
                   type="text"
-                  value={formData.nom}
-                  onChange={handleChange}
+                  {...register("nom", { required: "Le nom est requis" })}
                   className={`mt-1 block w-full border ${
                     errors.nom ? "border-red-500" : "border-gray-300"
                   } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
                 />
                 {errors.nom && (
-                  <p className="mt-1 text-sm text-red-500">{errors.nom}</p>
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.nom.message}
+                  </p>
                 )}
               </div>
 
@@ -137,14 +72,15 @@ export default function Register() {
                   id="prenom"
                   name="prenom"
                   type="text"
-                  value={formData.prenom}
-                  onChange={handleChange}
+                  {...register("prenom", { required: "Le prénom est requis" })}
                   className={`mt-1 block w-full border ${
                     errors.prenom ? "border-red-500" : "border-gray-300"
                   } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
                 />
                 {errors.prenom && (
-                  <p className="mt-1 text-sm text-red-500">{errors.prenom}</p>
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.prenom.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -161,14 +97,21 @@ export default function Register() {
                 id="email"
                 name="email"
                 type="email"
-                value={formData.email}
-                onChange={handleChange}
+                {...register("email", {
+                  required: "L'email est requis",
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "L'email n'est pas valide",
+                  },
+                })}
                 className={`mt-1 block w-full border ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -184,14 +127,21 @@ export default function Register() {
                 id="password"
                 name="password"
                 type="password"
-                value={formData.password}
-                onChange={handleChange}
+                {...register("password", {
+                  required: "Le mot de passe est requis",
+                  minlength: {
+                    value: 8,
+                    message: "Le mot de passe doit contenir au moins 8 caractères",
+                  },
+                })}
                 className={`mt-1 block w-full border ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -207,15 +157,21 @@ export default function Register() {
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
+                {...register("confirmPassword", {
+                  required: "La confirmation du mot de passe est requise",
+                  validate: {
+                    matchPassword: (value) =>
+                      value === watch("password") ||
+                      "Les mots de passe ne correspondent pas",
+                  },
+                })}
                 className={`mt-1 block w-full border ${
                   errors.confirmPassword ? "border-red-500" : "border-gray-300"
                 } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
               />
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-red-500">
-                  {errors.confirmPassword}
+                  {errors.confirmPassword.message}
                 </p>
               )}
             </div>
@@ -232,15 +188,18 @@ export default function Register() {
                 id="adresse"
                 name="adresse"
                 rows={3}
-                value={formData.adresse}
-                onChange={handleChange}
+                {...register("adresse", {
+                  required: "L'adresse est requise",
+                })}
                 className={`mt-1 block w-full border ${
                   errors.adresse ? "border-red-500" : "border-gray-300"
                 } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
                 placeholder="Votre adresse complète"
               />
               {errors.adresse && (
-                <p className="mt-1 text-sm text-red-500">{errors.adresse}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.adresse.message}
+                </p>
               )}
             </div>
 
@@ -256,15 +215,18 @@ export default function Register() {
                 id="telephone"
                 name="telephone"
                 type="tel"
-                value={formData.telephone}
-                onChange={handleChange}
+                {...register("telephone", {
+                  required: "Le numéro de téléphone est requis",
+                })}
                 className={`mt-1 block w-full border ${
                   errors.telephone ? "border-red-500" : "border-gray-300"
                 } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
                 placeholder="Ex: 0123456789"
               />
               {errors.telephone && (
-                <p className="mt-1 text-sm text-red-500">{errors.telephone}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.telephone.message}
+                </p>
               )}
             </div>
 

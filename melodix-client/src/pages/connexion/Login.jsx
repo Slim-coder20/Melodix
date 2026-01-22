@@ -1,60 +1,20 @@
-import { useState } from "react";
+import { useForm } from 'react-hook-form';
 import { Link } from "react-router-dom";
 
 
 
 
 export default function Login() {
-  // State //
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
-  });
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
-  const [errors, setErrors] = useState({});
-
-  // Fonction //
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value
-    }));
+  const onSubmit = async (data) => {
+    // Code pour envoyer les données à l'API backend //
+    console.log(data);
+    reset();
   };
-  // Validaion du formulaire //
-  const validateForm = () => {
-    const newErrors = {};
+  
 
-    if (!formData.email.trim()) {
-      newErrors.email = "L'email est requis";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "L'email n'est pas valide";
-    }
 
-    if (!formData.password) {
-      newErrors.password = "Le mot de passe est requis";
-    } else if (formData.password.length < 6) {
-      newErrors.password =
-        "Le mot de passe doit contenir au moins 6 caractères";
-    }
-
-    return newErrors;
-  };
-
-  // Soumission du formulaire de connexion //
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const newErrors = validateForm();
-
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Données du formulaire:", formData);
-      // Ici tu ajouteras l'appel API plus tard
-      alert("connexion réussie ! (Front-end seulement pour le moment)");
-    } else {
-      setErrors(newErrors);
-    }
-  };
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-10 sm:py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -73,7 +33,7 @@ export default function Login() {
       </div>
       <div className="mt-6 sm:mt-8 sm:mx-auto sm:w-full sm:max-w-md px-3 sm:px-0">
         <div className="bg-white p-4 md:py-8 md:px-10 shadow sm:rounded-lg">
-          <form className=" space-y-6 " onSubmit={handleSubmit}>
+          <form className=" space-y-6 " onSubmit={handleSubmit(onSubmit)}>
             {/* Email */}
             <div>
               <label
@@ -87,14 +47,19 @@ export default function Login() {
                 id="email"
                 name="email"
                 placeholder="Entrez votre email"
-                value={formData.email}
-                onChange={handleChange}
+                {...register("email", {
+                  required: "L'email est requis",
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "L'email n'est pas valide",
+                  },
+                })}
                 className={`mt-1 block w-full border ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
               )}
             </div>
 
@@ -111,14 +76,19 @@ export default function Login() {
                 id="password"
                 name="password"
                 placeholder="Entrez votre mot de passe"
-                value={formData.password}
-                onChange={handleChange}
+                {...register("password", {
+                  required: "Le mot de passe est requis",
+                  minlength: {
+                    value: 8,
+                    message: "Le mot de passe doit contenir au moins 8 caractères",
+                  },
+                })}
                 className={`mt-1 block w-full border ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 } rounded-md px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500`}
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
               )}
             </div>
             <div>
@@ -137,8 +107,7 @@ export default function Login() {
                   id="rememberMe"
                   name="rememberMe"
                   type="checkbox"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
+                  {...register("rememberMe")}
                   className="h-4 w-4 text-blue-600"
                 />
                 <label
