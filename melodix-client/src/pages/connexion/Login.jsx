@@ -1,16 +1,27 @@
 import { useForm } from 'react-hook-form';
-import { Link } from "react-router-dom";
-
-
-
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function Login() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const { login, isLoading } = useAuth();
+  const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    // Code pour envoyer les données à l'API backend //
-    console.log(data);
-    reset();
+    const result = await login(data.email, data.password);
+    
+
+    
+    if (result.success) {
+      showToast("Connexion réussie", { type: "success" });
+      reset();
+      // Rediriger vers la page d'accueil ou la page précédente
+      navigate("/");
+    } else {
+      showToast(result.message || "Erreur de connexion", { type: "error" });
+    }
   };
   
 
@@ -94,9 +105,10 @@ export default function Login() {
             <div>
               <button
                 type="submit"
-                className="w-full h-10 md:h-12 px-4 border border-transparent rounded-md shadow-sm text-sm md:text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 cursor-pointer"
+                disabled={isLoading}
+                className="w-full h-10 md:h-12 px-4 border border-transparent rounded-md shadow-sm text-sm md:text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Connexion
+                {isLoading ? "Connexion..." : "Connexion"}
               </button>
             </div>
             {/* Checkbox + Lien */}

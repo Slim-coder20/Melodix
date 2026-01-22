@@ -24,8 +24,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    // La validation du format est faite dans le controller avant le hashage
-    // Ici on stocke le hash qui ne correspond pas au pattern du mot de passe en clair
+
   },
   resetPasswordToken: {
     type: String,

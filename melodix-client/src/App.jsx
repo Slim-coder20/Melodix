@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import RootLayout from "@/layouts/RootLayout";
 import Home from "@/pages/Home";
-import Blog from "@/pages/Blog";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Team from "@/pages/Team";
@@ -18,16 +17,22 @@ import Batterie from "@/pages/articles/Batterie"
 import PianoClavier from "@/pages/articles/PianoClavier";
 import HomeStudio from "@/pages/articles/HomeStudio";
 import Wishlist from "@/pages/Wishlist";
-
+import ProtectedRoute from "@/components/ProtectedRoute";
 export default function App() {
   return (
     <Routes>
       {/* Routes avec layout (Header + Nav + footer) */}
       <Route element={<RootLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/blog" element={<Blog />} />
         <Route path="/product/:productId" element={<Product />} />
-        <Route path="/order" element={<Order />} />
+        <Route path="/order" element={
+          <ProtectedRoute requiredRole="user">
+
+            <Order />
+          </ProtectedRoute>
+          
+          } 
+          />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/equipe" element={<Team />} />

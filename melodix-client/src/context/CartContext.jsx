@@ -13,7 +13,7 @@ export default function CartProvider({ children }) {
   const [items, setItems] = useState(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY); // chaîne JSON ou null
-      return raw ? JSON.parse(raw) : [];             // on parse, sinon tableau vide
+      return raw ? JSON.parse(raw) : []; // on parse, sinon tableau vide
     } catch {
       // Si JSON.parse échoue ou localStorage indisponible, on part sur []
       return [];

@@ -4,13 +4,14 @@ import {
   FaShoppingCart,
   FaUser,
   FaSearch,
-  FaBlog,
   FaInfo,
   FaHeart,
 } from "react-icons/fa";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function Header() {
   const { totalCount } = useCart();
@@ -18,7 +19,27 @@ export default function Header() {
   const navigate = useNavigate();
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [mobileQuery, setMobileQuery] = useState("");
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  
+  // Pour afficher des notifications (toasts) lors d'ajout/suppression/vidage
+  const { showToast } = useToast();
+  
+  // Récupérer les information du contexte d'authentification // 
+  const { user, isAuthenticated, logout} = useAuth(); 
 
+  // fonction pour gérer la déconnexion // 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion:", error);
+      showToast("Erreur lors de la déconnexion", { type: "error" });
+    }
+  }
+
+  // Fonction pour gérer la soumission de la recherche mobile // 
   function handleMobileSearchSubmit(e) {
     e.preventDefault();
     const q = mobileQuery.trim();
@@ -27,11 +48,38 @@ export default function Header() {
     setMobileSearchOpen(false);
     setMobileQuery("");
   }
+
+  // Fonction pour gérer la soumission de la recherche desktop
+  function handleDesktopSearchSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const query = formData.get('search')?.trim();
+    if (query) {
+      navigate(`/search?q=${encodeURIComponent(query)}`);
+    }
+  }
+
+  // Fermer le menu utilisateur en cliquant à l'extérieur
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    }
+    
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userMenuOpen]);
   return (
     <header className="bg-gray-900 text-white sticky top-0 z-50">
       {/* Logo */}
       <div className="max-w-7xl mx-auto px-4 py-2 md:py-3 grid grid-cols-3 md:grid-cols-[auto_1fr_auto] items-center gap-3">
-        {/* Gauche: Blog */}
+        {/* Gauche: Logo */}
         <div className="flex flex-row items-center gap-4 flex-1">
           <Link to="/" className="flex items-center gap-2 group">
             <div className="flex items-center gap-2">
@@ -65,17 +113,10 @@ export default function Header() {
                 />
               </svg>
               {/* Texte Harmony avec style moderne */}
-              <span className="text-xl md:text-2xl font-bold text-white group-hover:text-blue-400 transition-colors cursor-pointer tracking-tight">
+              <span className=" text-2xl md:text-4xl font-bold text-white group-hover:text-blue-400 transition-colors cursor-pointer tracking-tight">
                 Melodix
               </span>
             </div>
-          </Link>
-          {/* Menu blog  */}
-          <Link to="/blog" className="flex items-center gap-2 ml-2">
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded bg-gray-800 hover:bg-gray-700">
-              <FaBlog size={18} />
-            </span>
-            <span className="hidden md:inline font-semibold">BLOG</span>
           </Link>
         </div>
 
@@ -89,29 +130,97 @@ export default function Header() {
           >
             <FaSearch />
           </button>
-          {/* Desktop: input */}
-          <div className="hidden md:block relative w-full max-w-xl">
+          {/* Desktop: formulaire de recherche */}
+          <form 
+            onSubmit={handleDesktopSearchSubmit}
+            className="hidden md:block relative w-full max-w-xl"
+          >
             <input
               type="text"
+              name="search"
               placeholder="Rechercher..."
-              className=" bg-white w-full p-3 border rounded pr-10 text-black"
+              className="bg-white w-full p-3 border rounded pr-10 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <FaSearch
-              size={18}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-          </div>
+            <button
+              type="submit"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Rechercher"
+            >
+              <FaSearch size={18} />
+            </button>
+          </form>
         </div>
         {/* Le menu de connexion / pannier / a propos / favoris */}
-        <div className="flex-1 flex justify-end gap-2 md:gap-3 ">
-          {/* Compte */}
-          <Link
-            to="/register"
-            className="inline-flex items-center justify-center w-10 h-10 rounded bg-gray-800 hover:bg-gray-700"
-            aria-label="Compte"
-          >
-            <FaUser size={18} />
-          </Link>
+        <div className="flex-1 flex justify-end gap-2 md:gap-6 ">
+          {/* Compte / Menu utilisateur */}
+          {isAuthenticated ? (
+            <div className="relative" ref={menuRef}>
+              {/* Bouton avec initiales */}
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors border-2 border-gray-700 hover:border-blue-500"
+                aria-label="Menu utilisateur"
+                title={`${user?.firstName} ${user?.lastName}`}
+              >
+                <span className="text-xs font-semibold text-white">
+                  {user?.firstName?.[0]?.toUpperCase()}
+                  {user?.lastName?.[0]?.toUpperCase()}
+                </span>
+              </button>
+              
+              {/* Menu déroulant */}
+              {userMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200 transition-all duration-200 opacity-100 transform translate-y-0">
+                  {/* En-tête avec informations utilisateur */}
+                  <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {user?.firstName} {user?.lastName}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                    {user?.role === 'admin' && (
+                      <span className="inline-block mt-2 px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">
+                        Administrateur
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Options du menu */}
+                  <div className="py-1">
+                    {/* Option: Mon profil (à décommenter si vous créez une page profil) */}
+                    {/* <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      Mon profil
+                    </Link> */}
+                    
+                    {/* Séparateur */}
+                    <div className="border-t border-gray-200 my-1"></div>
+                    
+                    {/* Bouton déconnexion */}
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setUserMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      Déconnexion
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="inline-flex items-center justify-center w-10 h-10 rounded bg-gray-800 hover:bg-gray-700 transition-colors"
+              aria-label="Se connecter"
+            >
+              <FaUser size={18} />
+            </Link>
+          )}
 
           {/* Favoris */}
           <Link

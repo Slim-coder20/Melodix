@@ -1,14 +1,22 @@
 import { useForm } from 'react-hook-form'; 
 import { Link } from "react-router-dom";
-
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function ForgotPassword() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const { forgotPassword, isLoading } = useAuth();
+  const { showToast } = useToast();
 
   const onSubmit = async (data) => {
-    // Code pour envoyer les données à l'API backend //
-    console.log(data);
-    reset();
+    const result = await forgotPassword(data.email);
+    
+    if (result.success) {
+      showToast(result.message || "Email de réinitialisation envoyé", { type: "success" });
+      reset();
+    } else {
+      showToast(result.message || "Erreur lors de l'envoi", { type: "error" });
+    }
   };
 
   return (
@@ -59,9 +67,10 @@ export default function ForgotPassword() {
             <div>
               <button
                 type="submit"
-                className="w-full h-10 md:h-12 px-4 border border-transparent rounded-md shadow-sm text-sm md:text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 cursor-pointer"
+                disabled={isLoading}
+                className="w-full h-10 md:h-12 px-4 border border-transparent rounded-md shadow-sm text-sm md:text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Nouveau mot de passe
+                {isLoading ? "Envoi..." : "Nouveau mot de passe"}
               </button>
             </div>
           </form>

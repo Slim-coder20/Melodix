@@ -11,9 +11,6 @@ const __dirname = dirname(__filename);
 // Charger le dotenv avant d'importer les fichiers DB
 dotenv.config({ path: join(__dirname, '.env') });
 
-// Vérification du chargement de JWT_SECRET (à retirer après vérification)
-console.log('JWT_SECRET loaded:', process.env.JWT_SECRET ? 'YES' : 'NO');
-
 // Importation des modules de base de données
 import { connectMongo } from './DB/mongoDB.js';
 import { connectPostgres } from './DB/postgres.js';

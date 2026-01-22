@@ -1,5 +1,7 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function Register() {
   const {
@@ -9,11 +11,23 @@ export default function Register() {
     reset,
     watch,
   } = useForm();
+  const { register: registerUser, isLoading } = useAuth();
+  const { showToast } = useToast();
+  const navigate = useNavigate();
 
   async function onSubmit(data) {
-    // Code pour envoyer les données à l'API backend //
-    console.log(data);
-    reset();
+    const result = await registerUser(data);
+    
+    if (result.success) {
+      showToast(result.message || "Inscription réussie", { type: "success" });
+      reset();
+      // Rediriger vers la page de connexion après inscription
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } else {
+      showToast(result.message || "Erreur lors de l'inscription", { type: "error" });
+    }
   }
 
   return (
@@ -133,6 +147,10 @@ export default function Register() {
                     value: 8,
                     message: "Le mot de passe doit contenir au moins 8 caractères",
                   },
+                  pattern: {
+                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message: "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial",
+                  },
                 })}
                 className={`mt-1 block w-full border ${
                   errors.password ? "border-red-500" : "border-gray-300"
@@ -234,9 +252,10 @@ export default function Register() {
             <div>
               <button
                 type="submit"
-                className="w-full h-10 md:h-12 px-4 border border-transparent rounded-md shadow-sm text-sm md:text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200"
+                disabled={isLoading}
+                className="w-full h-10 md:h-12 px-4 border border-transparent rounded-md shadow-sm text-sm md:text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                S'inscrire
+                {isLoading ? "Inscription..." : "S'inscrire"}
               </button>
             </div>
           </form>
