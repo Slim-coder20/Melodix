@@ -15,7 +15,7 @@ dotenv.config({ path: join(__dirname, '.env') });
 import { connectMongo } from './DB/mongoDB.js';
 import { connectPostgres } from './DB/postgres.js';
 import authRoutes from './routes/authRoute.js';
-
+import contactRoutes from './routes/contactRoute.js';
 
 // Initialize Express app // 
 const app = express(); 
@@ -30,7 +30,7 @@ await connectPostgres();
 
 // Routes //
 app.use('/api/auth', authRoutes);
-
+app.use('/api/contact', contactRoutes);
 // Start the server //
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
