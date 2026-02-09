@@ -128,7 +128,35 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   };
 
-  // Fonction pour réinitialiser le mot de passe
+  // Fonction pour définir un nouveau mot de passe (après clic sur le lien email)
+  const resetPassword = async (token, password, confirmPassword) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await apiRequest("/api/auth/reset-password", {
+        method: "POST",
+        body: JSON.stringify({ token, password, confirmPassword }),
+      });
+
+      return {
+        success: true,
+        message: response.message,
+      };
+    } catch (error) {
+      const errorMessage =
+        error.message || "Erreur lors de la réinitialisation du mot de passe";
+      setError(errorMessage);
+      return {
+        success: false,
+        message: errorMessage,
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fonction pour demander la réinitialisation du mot de passe (envoi email)
   const forgotPassword = async (email) => {
     setIsLoading(true);
     setError(null);
@@ -166,6 +194,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     forgotPassword,
+    resetPassword,
     setError, // Permet de réinitialiser l'erreur depuis les composants
   };
 

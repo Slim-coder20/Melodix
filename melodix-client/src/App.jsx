@@ -8,6 +8,7 @@ import HarmonyStore from "@/pages/HarmonyStore";
 import Register from "@/pages/connexion/Register";
 import Login from "@/pages/connexion/Login";
 import ForgotPassword from "@/pages/connexion/ForgotPassword";
+import ResetPassword from "@/pages/connexion/ResetPassword";
 import Order from "@/pages/Order";
 import Guitare from "@/pages/articles/Guitare";
 import Product from "@/pages/Product";
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
 
       {/* Optionnel: 404 */}

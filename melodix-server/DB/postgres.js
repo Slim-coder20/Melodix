@@ -31,7 +31,7 @@ const createPool = () => {
   return pool;
 };
 
-// Exporter le pool (sera créé à la première utilisation)
+// Exporter le pool qui sera utiliser a la première connexion 
 // Utilisation  getPool() dans les routes après avoir appelé connectPostgres()
 export const getPool = () => createPool();
 
