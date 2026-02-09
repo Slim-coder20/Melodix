@@ -7,10 +7,10 @@ import { getUserEmail } from "../template/index.js";
 export const contactUser = async (req, res ) => {
   try {
 
-      const { firstname, lastname, email, content } = req.body;
+      const { firstname, lastname, email, phone, content } = req.body;
       const messageContent = content ?? req.body.message; 
       
-      if(!firstname || !lastname || !email || !messageContent){
+      if(!firstname || !lastname || !email || !phone || !messageContent){
         return res.status(400).json({message: "Tous les champs sont requis"}); 
       }
     // Vérification du format de l'email 
@@ -25,6 +25,7 @@ export const contactUser = async (req, res ) => {
         firstname: firstname.trim(), 
         lastname: lastname.trim(),
         email: email.trim(),
+        phone: phone.trim(),
         content: messageContent.trim(),
       }); 
       await newContact.save(); 
@@ -39,7 +40,7 @@ export const contactUser = async (req, res ) => {
       to: email.trim(),
       subject: "✓ Votre message a été bien reçu - Melodix",
       text: `Bonjour ${firstname} ${lastname}, Merci de nous avoir contacté `,
-      html: getUserEmail(firstname.trim(), lastname.trim(), messageContent.trim()),
+      html: getUserEmail(firstname.trim(), lastname.trim(), phone.trim(), messageContent.trim()),
     });
 
     return res.status(200).json({message: "Message envoyé avec succès"});

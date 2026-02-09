@@ -1,19 +1,20 @@
-// Configuration de l'API backend
+/**
+ * Ce fichier contient la configuration de l'API backend 
+ * et la fonction utilitaire apiRequest pour effectuer des requêtes API
+ * centralisées dans un seul fichier pour faciliter la gestion des requêtes API
+ */
+
+// URL de base de l'API backend
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-/**
- * Fonction utilitaire pour effectuer des requêtes API
- * @param {string} endpoint - L'endpoint de l'API (ex: '/api/auth/login')
- * @param {object} options - Les options de la requête fetch
- * @returns {Promise} - La réponse de l'API
- */
+// Fonction utilitaire pour effectuer des requêtes API
 export async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
   
-  // Récupérer le token depuis localStorage
+  // Récupérer le token JWT depuis localStorage
   const token = localStorage.getItem('token');
   
-  // Configuration par défaut
+  // Configuration par défaut des options de la requête fetch
   const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
@@ -21,7 +22,7 @@ export async function apiRequest(endpoint, options = {}) {
     },
   };
 
-  // Fusionner les options
+  // Fusionner les options de la requête avec les options par défaut
   const config = {
     ...defaultOptions,
     ...options,
@@ -45,5 +46,5 @@ export async function apiRequest(endpoint, options = {}) {
   }
 }
 
-// Export de l'URL de base pour utilisation ailleurs si nécessaire
+// Export de l'URL de base pour utilisation ailleurs
 export { API_BASE_URL };

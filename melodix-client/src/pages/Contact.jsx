@@ -1,73 +1,44 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";    
 import HorizontalMenu from "../components/HorizontalMenu";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/context/ToastContext";
+import { apiRequest } from "@/utils/api";
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    nom: "",
-    prenom: "",
-    email: "",
-    message: "",
-    telephone: "",
+  // les States // 
+  const navigate = useNavigate(); 
+  const { showToast } = useToast(); 
+  const [isLoading, setIsLoading] = useState(false);
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      email: "",
+      phone:"",
+      content: "",
+    }
   });
-
-  const [errors, setErrors] = useState({});
-
-  // Gestion des erreurs dans les inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Effacer l'erreur du champ quand l'utilisateur tape
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
+  // Fonction pour envoyer le formulaire de contact en utilisant l'API backend avec la fonction apiRequest qui centralise les requêtes API//
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await apiRequest("/api/contact", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      showToast(response.message || "Message envoyé avec succès", { type: "success" });
+      reset();
+      navigate("/");
+    } catch (error) {
+      showToast(error.message || "Erreur lors de l'envoi du message", { type: "error" });
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  // Validation du formulaire
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.nom.trim()) newErrors.nom = "Le nom est requis";
-    if (!formData.prenom.trim()) newErrors.prenom = "Le prénom est requis";
-
-    // Vérification de la bonne syntaxe de l'email
-    if (!formData.email.trim()) {
-      newErrors.email = "L'email est requis";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "L'email n'est pas valide";
-    }
-
-    if (!formData.telephone.trim()) {
-      newErrors.telephone = "Le numéro de téléphone est requis";
-    } else if (!/^\d{10}$/.test(formData.telephone.replace(/\s/g, ""))) {
-      newErrors.telephone = "Le numéro de téléphone doit contenir 10 chiffres";
-    }
-
-    return newErrors;
-  };
-
-  // Soumettre le formulaire de contact
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newErrors = validateForm();
-
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Données du formulaire:", formData);
-      alert(
-        "Message envoyé avec succès ! (Front-end seulement pour le moment)"
-      );
-    } else {
-      setErrors(newErrors);
-      alert("Veuillez corriger les erreurs avant de soumettre votre message");
-    }
-  };
-
+  }
   return (
     <div className="min-h-screen bg-gray-50 ">
       {/* Menu de navigation  */}
@@ -106,15 +77,13 @@ export default function Contact() {
           COMMANDE PAR TÉLÉPHONE, CONSEILS PRODUITS
         </h3>
         <p className="mt-2 text-gray-700 text-center text-base md:text-[20px]">
-          Vous désirez passer une commande par téléphone, connaître la
-          disponibilité d'un produit sur internet ou un conseil, contactez nos
-          conseillers, ils sont tous musiciens ! Vous pouvez aussi nous écrire
+         contactez nos conseillers par email à l'adresse suivante  
           sur{" "}
           <a
-            href="mailto:conseil@woodbrass.com"
+            href="mailto:conseil@melodix.com"
             className="text-blue-500 underline"
           >
-            conseil@woodbrass.com
+            conseil@melodix.com
           </a>
         </p>
       </div>
@@ -122,44 +91,42 @@ export default function Contact() {
       {/* Formulaire de contact */}
       <div className="mt-8 md:mt-10 sm:mx-auto sm:w-full sm:max-w-md px-3 sm:px-0">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           className="bg-white p-4 md:p-6 rounded-lg shadow-lg mb-5"
         >
           <div className="mb-4">
             <label
-              htmlFor="nom"
+              htmlFor="lastname"
               className="block text-sm font-medium text-gray-700"
             >
-              Nom
+            Nom
             </label>
             <input
               type="text"
-              name="nom"
-              id="nom"
-              value={formData.nom}
-              onChange={handleChange}
+              name="lastname"
+              id="lastname"
+              {...register("lastname", { required: "Le nom est requis"})}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
-            {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
+            {errors.lastname && <p className="text-red-500 text-sm">{errors.lastname.message}</p>}
           </div>
 
           <div className="mb-4">
             <label
-              htmlFor="prenom"
+              htmlFor="firstname"
               className="block text-sm font-medium text-gray-700"
             >
-              Prénom
+            Prénom
             </label>
             <input
               type="text"
-              name="prenom"
-              id="prenom"
-              value={formData.prenom}
-              onChange={handleChange}
+              name="firstname"
+              id="firstname"
+              {...register("firstname", { required: "Le prénom est requis"})}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
-            {errors.prenom && (
-              <p className="text-red-500 text-sm">{errors.prenom}</p>
+            {errors.firstname && (
+              <p className="text-red-500 text-sm">{errors.firstname.message}</p>
             )}
           </div>
 
@@ -174,56 +141,58 @@ export default function Contact() {
               type="email"
               name="email"
               id="email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register("email",{required:"L'email est requis"})}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
             {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email}</p>
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
             )}
           </div>
 
           <div className="mb-4">
             <label
-              htmlFor="telephone"
+              htmlFor="phone"
               className="block text-sm font-medium text-gray-700"
             >
               Téléphone
             </label>
             <input
               type="text"
-              name="telephone"
-              id="telephone"
-              value={formData.telephone}
-              onChange={handleChange}
+              name="phone"
+              id="phone"
+              {...register("phone", {required:"Le numéro de téléphone est requis"})}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
-            {errors.telephone && (
-              <p className="text-red-500 text-sm">{errors.telephone}</p>
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone.message}</p>
             )}
           </div>
 
           <div className="mb-4">
             <label
-              htmlFor="message"
+              htmlFor="content"
               className="block text-sm font-medium text-gray-700"
             >
               Message
             </label>
             <textarea
-              name="message"
-              id="message"
-              value={formData.message}
-              onChange={handleChange}
+              name="content"
+              id="content"
+              {...register("content", {required: "Le message est requis"})}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             ></textarea>
+            {errors.content && (
+              <p className="text-red-500 text-sm">{errors.content.message}</p>
+            )}
+
           </div>
 
           <button
             type="submit"
-            className="w-full h-10 md:h-12 bg-blue-500 text-white text-sm md:text-base rounded-md hover:bg-blue-600"
+            disabled={isLoading}
+            className="w-full h-10 md:h-12 bg-blue-500 text-white text-sm md:text-base rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Envoyer
+            {isLoading ? "Envoi en cours…" : "Envoyer"}
           </button>
         </form>
       </div>

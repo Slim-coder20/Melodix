@@ -1,6 +1,6 @@
 import HorizontalMenu from "@/components/HorizontalMenu";
 
-export default function HarmonyStore() {
+export default function MelodixStore() {
   const stores = [
     {
       title: "GUITARES & BASSES",
@@ -21,7 +21,7 @@ export default function HarmonyStore() {
       <HorizontalMenu />
       <div className=" bg-gray-100 px-4 py-8 md:p-20 relative">
         <h1 className=" text-3xl sm:text-5xl md:text-8xl text-center font-bold leading-tight">
-          LES MAGASINS HARMONY MUSIC À PARIS
+          LES MAGASINS MELODIX MUSIC À PARIS
         </h1>
       </div>
       {/* Section des images  */}

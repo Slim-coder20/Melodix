@@ -32,20 +32,13 @@ export default function HorizontalMenu() {
         </li>
         <li>
           <Link
-            to="/harmony-store"
+            to="/melodix-store"
             className="text-base sm:text-lg md:text-2xl hover:font-bold transition duration-300 text-center"
           >
-            HARMONY STORE
+            MELODIX STORE
           </Link>
         </li>
-        <li>
-          <Link
-            to="/logistique"
-            className="text-base sm:text-lg md:text-2xl hover:font-bold transition duration-300 text-center"
-          >
-            LOGISTIQUE
-          </Link>
-        </li>
+      
       </ul>
     </div>
   );

@@ -4,7 +4,7 @@ import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Team from "@/pages/Team";
-import HarmonyStore from "@/pages/HarmonyStore";
+import MelodixStore from "@/pages/MelodixStore";
 import Register from "@/pages/connexion/Register";
 import Login from "@/pages/connexion/Login";
 import ForgotPassword from "@/pages/connexion/ForgotPassword";
@@ -37,7 +37,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/equipe" element={<Team />} />
-        <Route path="/harmony-store" element={<HarmonyStore />} />
+        <Route path="/melodix-store" element={<MelodixStore />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/guitare" element={<Guitare />} />
         <Route path="/basse" element={<Basse />} />
