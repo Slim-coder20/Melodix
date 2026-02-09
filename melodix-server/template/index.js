@@ -1,0 +1,1 @@
+export { getResetPasswordTemplate } from './resetPasswordTemplate.js';

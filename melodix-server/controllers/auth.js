@@ -1,7 +1,9 @@
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto'; 
+import crypto from 'crypto';
+import transporter from '../config/email.js';
+import { getResetPasswordTemplate } from '../template/index.js'; 
 
 // Création d'un nouvel utilisateur //
 export const register = async (req, res) => {
@@ -213,8 +215,8 @@ export const forgotPassword = async (req, res) => {
     // Vérification si l'email existe //
     const existingUser = await User.findOne({ email: normalizedEmail });
 
-    // IMPORTANT : Toujours retourner le même message pour éviter l'énumération d'emails
-    // Même si l'utilisateur n'existe pas, on retourne un message de succès
+    
+    // Si l'email existe, on retourne un message de succès
     if (existingUser) {
       // Génération d'un token de réinitialisation sécurisé
       const resetToken = crypto.randomBytes(32).toString('hex');
@@ -226,9 +228,19 @@ export const forgotPassword = async (req, res) => {
       existingUser.resetPasswordExpires = resetTokenExpires;
       await existingUser.save();
 
-      // Envoi d'un email de réinitialisation du mot de passe à implémenter plus tard
-      // const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
-      // await sendResetPasswordEmail(existingUser.email, resetUrl);
+      // Envoi de l'email de réinitialisation du mot de passe
+      try {
+        const mailOptions = getResetPasswordTemplate(
+          existingUser.email,
+          resetToken,
+          process.env.FRONTEND_URL || 'http://localhost:5173',
+          existingUser.firstName
+        );
+        await transporter.sendMail(mailOptions);
+      } catch (emailError) {
+        console.error("Erreur lors de l'envoi de l'email de réinitialisation:", emailError);
+        // On ne révèle pas l'erreur à l'utilisateur pour éviter l'énumération d'emails
+      }
     }
 
     // Toujours retourner le même message pour éviter l'énumération d'emails
@@ -247,3 +259,72 @@ export const forgotPassword = async (req, res) => {
     });
   }
 };
+
+// Définition du nouveau mot de passe (après clic sur le lien dans l'email) //
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, password, confirmPassword } = req.body;
+
+    // Validation des données //
+    if (!token || !password || !confirmPassword) {
+      return res.status(400).json({
+        errorMessage: 'Le token et le mot de passe sont requis',
+      });
+    }
+
+    // Vérification que les mots de passe correspondent //
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        errorMessage: 'Les mots de passe ne correspondent pas',
+      });
+    }
+
+    // Validation de la longueur du mot de passe //
+    if (password.length < 8) {
+      return res.status(400).json({
+        errorMessage:
+          'Le mot de passe doit contenir au moins 8 caractères',
+      });
+    }
+
+    // Validation de la force du mot de passe //
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        errorMessage:
+          'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial',
+      });
+    }
+
+    // Recherche de l'utilisateur avec un token valide et non expiré //
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        errorMessage:
+          'Le lien de réinitialisation est invalide ou a expiré. Veuillez faire une nouvelle demande.',
+      });
+    }
+
+    // Hashage du nouveau mot de passe //
+    const saltRounds = 12;
+    user.password = await bcrypt.hash(password, saltRounds);
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    return res.status(200).json({
+      message: 'Votre mot de passe a été réinitialisé avec succès',
+    });
+  } catch (error) {
+    console.error('Erreur lors de la réinitialisation du mot de passe:', error);
+    return res.status(500).json({
+      errorMessage: 'Erreur lors de la réinitialisation du mot de passe',
+    });
+  }
+};
+
