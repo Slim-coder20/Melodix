@@ -1,0 +1,55 @@
+brand,model,slug,id_category,price,monthly,badge,image,is_active
+"Jim Forest","CANDY REd","jim-forest-candy-red",4,1500,58,"TOP VENTES","/basses/prodipe.jpg",true
+"Yamaha","TRBX304","yamaha-trbx304",4,780,35,,"/basses/yamaha-bass.jpg",true
+"ESP","LTD FB-4","esp-ltd-fb-4",4,670,25,,"/basses/esp-bass.avif",true
+"Thoman","upright","thoman-upright",5,800,90,,"/basses/bass-fretless.jpg",true
+"Ibanez","Fretless Piezo","ibanez-srd900f-btl",5,1200,120,,"/basses/bass-fretless2.jpeg",true
+"ESP","LTD Vintage","esp-ltd-vintage-2014",5,500,55,,"/basses/bass-fretless3.jpg",true
+"Fender","ST80 MA Sunburst","fender-st80-sunburst",1,1500,58,"TOP VENTES","/guitares/ST80_Sunburst.jpg",true
+"Ibanez","GIO GRX70QA-TRB","ibanez-gio-grx70qa-trb",1,780,35,,"/guitares/ibanez.webp",true
+"Harley Benton","CST-24T","harley-benton-cst-24t",1,670,25,,"/guitares/harley-benton.webp",true
+"Yamaha","F310","yamaha-f310",1,650,45,,"/guitares/yamaha-f310.jpg",true
+"Takamine","SD25","takamine-sd25",1,670,25,,"/guitares/sd25.jpg",true
+"Gibson","J-45 Standard","gibson-j45-standard",1,2600,150,,"/guitares/gibson-accoustique.jpeg",true
+"Silvanez","CL44-NAT","silvanez-cl44-nat",3,800,90,,"/guitares/classique1.jpeg",true
+"Yamaha","CGS102","yamaha-cgs102",3,1200,120,,"/guitares/classique2.jpg",true
+"Yamaha","C40 Black","yamaha-c40-black",3,500,55,,"/guitares/classique3.jpg",true
+"Stag","TM122","stag-tm122",1,2500,150,"TOP VENTES","/batterie/batterie-accoustique1.jpg",true
+"Pearl","DMP92","pearl-dmp92",1,1500,89,"TOP VENTES","/batterie/batterie-accoustique2.avif",true
+"Ludwig","Oak Eurobeat","ludwig-oak-eurobeat",1,4550,250,"TOP VENTES","/batterie/batterie-accoustique3.jpg",true
+"Alesis","Strata Prime","alesis-strata-prime",1,3149,200,"TOP VENTES","/batterie/batterie-electrique1.jpg",true
+"Yamaha","DTX-920K","yamaha-dtx-920k",1,3500,250,"TOP VENTES","/batterie/batterie-electrique2.jpg",true
+"Roland","VAD306","roland-vad306",1,1800,150,"TOP VENTES","/batterie/batterie-electrique3.jpg",true
+"EBS","Multi-Compressor-BL","multi-compressor",7,250,20,"TOP VENTES","/effets/EBS-effet-bass.avif",true
+"Nux","Preamp","nux-preamp",7,154.9,20,"TOP VENTES","/effets/nux-preamp-bass.jpg",true
+"Joyo","Pedal","joyo-pedal",7,96.9,20,"TOP VENTES","/effets/joyo-effet-bass.jpg",true
+"Boss","DS-1","boss-destortion",6,250,20,"TOP VENTES","/effets/boss-effet-guitare.webp",true
+"Tonex","Amp","tonex-amp",6,450,88,"TOP VENTES","/effets/tonex-amp-guitare.jpg",true
+"Zoom","B2","zoom-b2",6,250,20,"TOP VENTES","/effets/zoom-guitare.jpg",true
+"Steinberg","Cubase Pro 14","cubase-pro14",1,350,89,,"/home-studio/logiciel1.jpg",true
+"Ableton","Live 11","abelton-live-11",1,250,60,,"/home-studio/logiciel2.jpg",true
+"Apple","Logic Pro 11","logic-pro-11",1,450,120,,"/home-studio/logiciel-3.webp",true
+"Apple","Pro Tools 12","protools-12",1,560,120,,"/home-studio/logiciel-4.jpg",true
+"Focusrite","Scarlett 2i2","scarlett-2i2",1,250,50,,"/home-studio/carte-son1.jpg",true
+"Focusrite","Scarlett 18i20","scarlett-18i20",1,700,89,,"/home-studio/focusrite2.jpg",true
+"Universal Audio","TwinX USB","twinX-usb",1,250,50,,"/home-studio/universal-audio.jpeg",true
+"Universal Audio","Volt 476P","universal-audio-volt476P",1,416,89,,"/home-studio/universal2.webp",true
+"Yamaha","Etude Cs40 3-4","yamaha-etude-cs40-3-4",3,300,30,"TOP VENTES","/home/products/trompete1.jpg",true
+"Fodera","Etude Cs40 3-4","fodera-etude-cs40-3-4",1,3500,120,"TOP VENTES","/home/products/fodera1.jpg",true
+"Ibanez","AS 113 BS","ibanez-as113-bs",1,2500,30,"TOP VENTES","/home/products/ibanez1.jpg",true
+"Ibanez","PF 15 NT","ibanez-pf15-nt",1,178,25,"TOP VENTES","/home/products/ibanez2.jpg",true
+"DW","Etude Cs40 3-4","dw-etude-cs40-3-4",8,2500,85,"TOP VENTES","/home/products/dw1.webp",true
+"Imperial","Piano a queue","imperial-piano-a-queue",1,5000,250,"TOP VENTES","/home/products/pianoimperial.jpg",true
+"NATIVE INSTRUMENTS MASCHINE MK3","MK3","native-instruments-maschine-mk3",1,600,55,"NOUVEAUTÉ","/home/newProducts/MK3.avif",true
+"LD system","CURV 500 PS","ld-system-curv-500-ps",11,2800,86,"NOUVEAUTÉ","/home/newProducts/Ldsystem.jpg",true
+"Orange","Super Crush 100 Head","orange-super-crush-100-head",12,800,58,"NOUVEAUTÉ","/home/newProducts/orangeamp.webp",true
+"Korg","microKey-2","korg-microkey-2",13,86,25,"NOUVEAUTÉ","/home/newProducts/korgmicro.jpg",true
+"Fender","Stratocaster","fender-stratocaster-home",13,1500,45,"NOUVEAUTÉ","/home/newProducts/stratofender.jpg",true
+"Nord","nord-elctro6","electro-sd76",1,2199,280,,"/piano-clavier/clavier-electrique1.webp",true
+"Ketron","Event76","ketron-event76",1,4980,320,,"/piano-clavier/clavier-electrique2.webp",true
+"Yamaha","PSR-E233","yamaha-psr-e233",1,2500,258,,"/piano-clavier/clavier-electrique3.avif",true
+"Korg","SV288","korg-sv288",1,2023,300,,"/piano-clavier/clavier-electrique4.png",true
+"Yamaha","C2X","yamaha-c2x",9,4500,320,,"/piano-clavier/piano-accoustique1.jpg",true
+"Yamaha","B2","yamaha-b2",9,2500,200,,"/piano-clavier/piano-accoustique2.webp",true
+"Yamaha","CX1","yamaha-cx1",9,28890,1500,,"/piano-clavier/piano-accoustique3.jpeg",true
+"Yamaha","arius-ydp-145","yamaha-arius-ydp-145",9,5600,450,,"/piano-clavier/accoustique4.jpg",true

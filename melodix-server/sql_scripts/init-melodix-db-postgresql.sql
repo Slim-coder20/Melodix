@@ -93,7 +93,7 @@ CREATE INDEX IF NOT EXISTS idx_stocks_is_active ON stocks(is_active);
 -- ============================================
 -- TABLE: stock_product
 -- ============================================
-CREATE TABLE IF NOT EXISTS stock_product (
+CREATE TABLE IF NOT EXISTS  t (
     stock_id SMALLINT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL DEFAULT 0 CHECK (quantity >= 0),

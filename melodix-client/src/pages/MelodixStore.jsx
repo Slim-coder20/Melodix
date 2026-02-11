@@ -4,15 +4,15 @@ export default function MelodixStore() {
   const stores = [
     {
       title: "GUITARES & BASSES",
-      image: "/home/boutique1.jpeg",
+      image: "/home/ui/boutique1.jpeg",
     },
     {
       title: "BATTERIES & PERCUSSIONS",
-      image: "/home/boutique2.webp",
+      image: "/home/ui/boutique2.webp",
     },
     {
       title: "CLAVERS & HOME STUDIO",
-      image: "/home/boutique3.avif",
+      image: "/home/ui/boutique3.avif",
     },
   ];
   return (
