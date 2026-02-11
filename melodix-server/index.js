@@ -16,6 +16,7 @@ import { connectMongo } from './DB/mongoDB.js';
 import { connectPostgres } from './DB/postgres.js';
 import authRoutes from './routes/authRoute.js';
 import contactRoutes from './routes/contactRoute.js';
+import productRoutes from './routes/productRoute.js'; 
 
 // Initialize Express app // 
 const app = express(); 
@@ -31,6 +32,7 @@ await connectPostgres();
 // Routes //
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/products', productRoutes); 
 // Start the server //
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
