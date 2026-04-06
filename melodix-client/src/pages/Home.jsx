@@ -11,14 +11,36 @@ import Carrousel from "../components/Carrousel";
 import ProductCard from "@/components/ProductCard";
 import { homeBestSellers, homeNewProducts, popularBrands } from "@/data/home";
 import { batterieProducts } from "@/data/batterie";
+import { useState, useEffect } from "react";
+import { apiRequest } from "@/utils/api";
+
 export default function Home() {
+
   // Construire la liste "meilleures ventes" à partir des guitares et des entrées spécifiques à la home
-  const products = [
   
-    ...homeBestSellers,
-    ...batterieProducts,
+  const [error, setError ] = useState(null);
+  const [isLoading, setIsLoading ] = useState(false);
+  const [products, setProducts ] = useState([]); 
   
-  ];
+  async function fetchProducts() {
+    setIsLoading(true);
+    setError(null); 
+
+  try {
+    // on appel la route api/products a travers la fonction apiRequest //
+    const data = await apiRequest('/api/products');
+    // On filtre et on stocke uniquement les produits "TOP VENTES" dans l'état
+    setProducts(data.products.filter(p => p.badge === "TOP VENTES"));
+  } catch (error) {
+    setError(error.message || "Erreur lors du chargement des produits ")
+  } finally {
+    setIsLoading(false);
+  }
+}
+// Appel de la fonction fetchProducts à l'affichage du HomePage //
+useEffect(() => {
+  fetchProducts();
+},[]); 
 
   // Nouveautés
   const newProducts = homeNewProducts;
