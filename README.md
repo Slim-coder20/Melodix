@@ -16,32 +16,38 @@ Application web **full‑stack** pour une boutique musicale (frontend React/Vite
 - **Conteneurisation (dev)**: Docker Compose (client `5173`, API `3000`)
 - **Déploiement frontend**: Vercel (rewrite SPA)
 
-### Architecture (schéma)
+### Structure du projet (backend + frontend)
 
-```mermaid
-flowchart LR
-  U[Utilisateur / Navigateur] -->|HTTPS| V[Vercel\nmelodix-nine.vercel.app]
-  V -->|SPA React (Vite build)| FE[Frontend\nReact + Tailwind]
-
-  FE -->|HTTP(S) /api/*| API[Backend API\nNode.js + Express\n:3000]
-
-  API -->|Mongoose| MDB[(MongoDB)]
-  API -->|pg Pool| PDB[(PostgreSQL\nou Supabase via DATABASE_URL)]
-
-  API -->|SMTP| MAIL[(Nodemailer / Email provider)]
+```text
+Melodix/
+├── melodix-server/                 # Backend Express.js (API)
+│   ├── index.js                    # Point d’entrée (Express + routes /api/*)
+│   ├── DB/                         # Connexions bases de données
+│   │   ├── mongoDB.js              # Connexion MongoDB (Mongoose)
+│   │   └── postgres.js             # Connexion PostgreSQL / Supabase (pg)
+│   ├── controllers/                # Logique métier (auth, produits, contact)
+│   ├── routes/                     # Routes API (auth, contact, products)
+│   ├── models/                     # Schémas / modèles (Mongoose, etc.)
+│   ├── template/                   # Templates emails (reset, contact, ...)
+│   ├── sql_scripts/                # Scripts SQL (init DB PostgreSQL)
+│   └── dockerfile                  # Image Docker du backend
+│
+├── melodix-client/                 # Frontend React + Vite
+│   ├── src/
+│   │   ├── components/             # Composants UI
+│   │   ├── pages/                  # Pages (routes côté React)
+│   │   ├── context/                # Context (Auth, Cart, Wishlist, Toast)
+│   │   ├── utils/                  # Helpers (ex: appels API)
+│   │   ├── layouts/                # Layouts
+│   │   └── data/                   # Données statiques / seed (si utilisé)
+│   ├── public/                     # Assets statiques
+│   ├── vite.config.js              # Config Vite (port 5173, alias @)
+│   └── vercel.json                 # Rewrite SPA pour Vercel
+│
+├── docker-compose.yml              # Lancement dev multi‑services (5173 / 3000)
+├── Diagrammes /                    # Diagrammes BD (attention: espace final)
+└── README.md
 ```
-
-### Structure du dépôt
-
-- `melodix-client/`: application frontend (React/Vite)
-- `melodix-server/`: API backend (Express)
-  - `index.js`: point d’entrée (montage des routes `/api/auth`, `/api/contact`, `/api/products`)
-  - `routes/`: routes Express
-  - `controllers/`: logique métier
-  - `DB/`: connexions MongoDB + PostgreSQL
-  - `sql_scripts/`: scripts SQL d’initialisation
-- `docker-compose.yml`: environnement de développement multi‑services
-- `Diagrammes /`: diagrammes de base de données (attention: le nom du dossier contient un espace final)
 
 ### Prérequis
 
