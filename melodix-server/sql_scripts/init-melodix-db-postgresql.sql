@@ -8,7 +8,7 @@
 CREATE TABLE IF NOT EXISTS categories (
     id SMALLSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    slug VARCHAR(100) NOT NULL UNIQUE,
+    slug VARCHAR(100) NOT NULL UNIQUE,deede
     description TEXT,
     parent_id SMALLINT NULL,
     image VARCHAR(255) NULL,
